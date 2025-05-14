@@ -8,13 +8,20 @@ createRoot(document.getElementById('root')).render(
     <App />
   </StrictMode>,
 )
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import mdx from '@mdx-js/rollup'
-
-export default defineConfig({
-  plugins: [
-    { enforce: 'pre', ...mdx() },
-    react({ include: /\.(mdx|js|jsx|ts|tsx)$/ }),
-  ],
+react({ jsxImportSource: '@emotion/react' })
+react({ tsDecorators: true })
+react({ plugins: [['@swc/plugin-styled-components', {}]] })
+react({ devTarget: 'es2022' })
+react({
+  parserConfig(id) {
+    if (id.endsWith('.res')) return { syntax: 'ecmascript', jsx: true }
+    if (id.endsWith('.ts')) return { syntax: 'typescript', tsx: false }
+  },
+})
+react({ reactRefreshHost: 'http://localhost:3000' })
+react({
+  useAtYourOwnRisk_mutateSwcOptions(options) {
+    options.jsc.parser.decorators = true
+    options.jsc.transform.decoratorVersion = '2022-03'
+  },
 })
